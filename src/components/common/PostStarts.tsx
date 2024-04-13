@@ -27,7 +27,7 @@ const PostStarts = ({ post, userId }: IProps) => {
 
   useEffect(() => {
     const saved = currentUser?.save.find(
-      (record: Models.Document) => record.post.$id === post.$id
+      (record: Models.Document) => record?.post?.$id === post?.$id
     );
     setIsSaved(!!saved);
   }, [currentUser]);

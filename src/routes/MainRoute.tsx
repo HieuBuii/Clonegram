@@ -6,11 +6,11 @@ import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import RootLayout from "../layouts/RootLayout/RootLayout";
 import Explore from "@/pages/Explore";
 import CreatePost from "@/pages/CreatePost";
-import UpdatePost from "@/pages/UpdatePost";
+import EditPost from "@/pages/EditPost";
 import AllUsers from "@/pages/AllUsers";
 import PostDetail from "@/pages/PostDetail";
 import Profile from "@/pages/Profile";
-import UpdateProfile from "@/pages/UpdateProfile";
+import EditProfile from "@/pages/EditProfile";
 import Saved from "@/pages/Saved";
 import { useUserContext } from "@/context/AuthContext";
 import LoadingPage from "@/components/ui/LoadingPage";
@@ -35,11 +35,11 @@ const MainRoute = () => {
             <Route path="/explore" element={<Explore />} />
             <Route path="/saved" element={<Saved />} />
             <Route path="/create-post" element={<CreatePost />} />
-            <Route path="/update-post" element={<UpdatePost />} />
+            <Route path="/update-post/:id" element={<EditPost />} />
             <Route path="/all-users" element={<AllUsers />} />
             <Route path="/posts/:id" element={<PostDetail />} />
             <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/update-profile/:id" element={<UpdateProfile />} />
+            <Route path="/update-profile/:id" element={<EditProfile />} />
           </Route>
         )}
       </Routes>
