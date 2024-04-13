@@ -12,18 +12,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signInFormSchema } from "@/lib/validation";
-import { Loader } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
+import Loader from "@/components/common/Loader";
 
 const SignInForm = () => {
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const { checkAuthUser } = useUserContext();
   const naviage = useNavigate();
 
-  const { mutateAsync: signInAccount } = useSignInAccount();
+  const { mutateAsync: signInAccount, isPending: isLoggingIn } =
+    useSignInAccount();
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
@@ -94,12 +95,12 @@ const SignInForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            {isUserLoading ? (
+            {isLoggingIn ? (
               <>
                 <Loader /> Loading...
               </>
             ) : (
-              "Sign up"
+              "Sign in"
             )}
           </Button>
           <p className="text-small-regular text-light-2 text-center mt-2">

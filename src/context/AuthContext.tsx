@@ -31,8 +31,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkAuthUser = async () => {
     try {
+      setIsLoading(true);
       const currentAccount = await getCurrentUser();
       if (currentAccount) {
+        console.log(currentAccount);
         const { $id, name, username, email, imageUrl, bio } = currentAccount;
         setUser({
           id: $id,
@@ -56,11 +58,15 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    const cookieFallback = localStorage.getItem("cookieFallback");
     if (
-      localStorage.getItem("cookieFallback") === "[]" ||
-      localStorage.getItem("cookieFallback") === null
+      cookieFallback === "[]" ||
+      cookieFallback === null ||
+      cookieFallback === undefined
     )
       navigate("/sign-in");
+
+    checkAuthUser();
   }, []);
 
   const value = {
@@ -71,6 +77,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated,
     checkAuthUser,
   };
+
+  console.log(value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
