@@ -18,16 +18,22 @@ import { Models } from "appwrite";
 import { useUserContext } from "@/context/AuthContext";
 import { useToast } from "../ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations";
+import {
+  useCreatePost,
+  useUpdatePost,
+} from "@/lib/react-query/queriesAndMutations";
 import Loader from "../common/Loader";
 
 interface IProps {
   post?: Models.Document;
+  action: "Create" | "Update";
 }
 
-const PostForm = ({ post }: IProps) => {
+const PostForm = ({ post, action }: IProps) => {
   const { mutateAsync: createPost, isPending: isLoadingCreatePost } =
     useCreatePost();
+  const { mutateAsync: updatePost, isPending: isLoadingUpdatePost } =
+    useUpdatePost();
   const { user } = useUserContext();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -43,6 +49,23 @@ const PostForm = ({ post }: IProps) => {
   });
 
   const handleSubmit = async (values: z.infer<typeof postValidation>) => {
+    //udpate
+    if (post && action === "Update") {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post.imageId,
+        imageUrl: post.imageUrl,
+      });
+
+      if (!updatedPost) {
+        toast({ title: "Edit post failed, please try again !!" });
+      }
+
+      return navigate(`/posts/${post.$id}`);
+    }
+
+    //create
     const newPost = await createPost({
       ...values,
       userId: user.id,
@@ -136,10 +159,13 @@ const PostForm = ({ post }: IProps) => {
           <Button
             type="submit"
             className="shad-button_primary whitespace-nowrap"
-            disabled={isLoadingCreatePost}
+            disabled={isLoadingCreatePost || isLoadingUpdatePost}
           >
-            {isLoadingCreatePost && <Loader />}
-            Submit
+            {isLoadingCreatePost || isLoadingUpdatePost ? (
+              <Loader />
+            ) : (
+              action + " Post"
+            )}
           </Button>
         </div>
       </form>
