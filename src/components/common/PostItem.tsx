@@ -2,7 +2,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { timeAgo } from "@/utils/utils";
 import { Models } from "appwrite";
 import { Link } from "react-router-dom";
-import PostStarts from "./PostStarts";
+import PostStarts from "./PostStars";
 
 interface IProps {
   post: Models.Document;
@@ -18,7 +18,9 @@ export const PostItem = ({ post }: IProps) => {
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.creator.$id}`}>
             <img
-              src="/assets/icons/profile-placeholder.svg"
+              src={
+                post.creator.imageUrl || "/assets/icons/profile-placeholder.svg"
+              }
               alt="creator"
               className="rounded-full w-12 lg:h-12"
             />

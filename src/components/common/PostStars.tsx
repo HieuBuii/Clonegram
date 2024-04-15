@@ -14,7 +14,7 @@ interface IProps {
   userId: string;
 }
 
-const PostStarts = ({ post, userId }: IProps) => {
+const PostStars = ({ post, userId }: IProps) => {
   const likesList = post.likes.map((user: Models.Document) => user.$id);
   const [likes, setLikes] = useState(likesList);
   const [isSaved, setIsSaved] = useState(false);
@@ -92,4 +92,4 @@ const PostStarts = ({ post, userId }: IProps) => {
   );
 };
 
-export default PostStarts;
+export default PostStars;
