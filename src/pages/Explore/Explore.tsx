@@ -7,7 +7,8 @@ import {
   useGetPost,
   useSearchPosts,
 } from "@/lib/react-query/queriesAndMutations";
-import { useEffect, useState } from "react";
+import { IPost } from "@/types";
+import { useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 const Explore = () => {
@@ -21,6 +22,15 @@ const Explore = () => {
   useEffect(() => {
     if (inView && !searchValue) fetchNextPage();
   }, [inView, searchValue]);
+
+  const dataPost = useMemo(() => {
+    let newData: IPost[] = [];
+    posts?.pages?.forEach((item) => {
+      const listPosts = (item?.documents || []) as IPost[];
+      newData = [...newData, ...listPosts];
+    });
+    return newData;
+  }, [posts]);
 
   if (!posts)
     return (
@@ -66,9 +76,7 @@ const Explore = () => {
         ) : shouldShowPost ? (
           <p className="text-light-4 mt-10 text-center w-full">End of posts</p>
         ) : (
-          posts.pages.map((item, index) => (
-            <GridPostList key={`page-${index}`} posts={item?.documents || []} />
-          ))
+          <GridPostList posts={dataPost || []} />
         )}
       </div>
       {hasNextPage && !searchValue && (

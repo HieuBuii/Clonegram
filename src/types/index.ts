@@ -45,9 +45,18 @@ export type IUser = {
   name: string;
   username: string;
   email: string;
-  imageUrl: string;
+  imageUrl: URL | string;
   bio: string;
+  followed: string[];
+  following: string[];
+  conversations: string[];
+  imageId: string;
 };
+
+export interface IUserUpdate extends IUser {
+  file: File[];
+  $id?: string;
+}
 
 export type INewUser = {
   name: string;
@@ -62,4 +71,20 @@ export interface IUserDB {
   email: string;
   username: string;
   imageUrl: URL;
+}
+
+export interface IPost {
+  caption: string;
+  tags: string[];
+  imageUrl: string;
+  imageId: string;
+  location: string;
+  $id: string;
+  $createdAt: string;
+  $updatedAt: string;
+  $permissions: string[];
+  creator: IUser;
+  likes: IUser;
+  $databaseId: string;
+  $collectionId: string;
 }

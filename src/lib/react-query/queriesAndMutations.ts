@@ -4,8 +4,11 @@ import {
   deletePost,
   getCurrentUser,
   getInfinitePost,
+  getInfiniteSaves,
+  getInfiniteUsers,
   getPostById,
   getRecentPosts,
+  getSaves,
   likePost,
   savePost,
   searchPost,
@@ -13,8 +16,9 @@ import {
   signOutAccount,
   unSavePost,
   updatePost,
+  updateUser,
 } from "@/lib/appwrite/apis";
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUserUpdate } from "@/types";
 import {
   useQuery,
   useMutation,
@@ -72,7 +76,6 @@ export const useLikePost = () => {
       likesArray: string[];
     }) => likePost(postId, likesArray),
     onSuccess: (data) => {
-      console.log(data);
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_POSTS, data?.$id],
       });
@@ -80,7 +83,7 @@ export const useLikePost = () => {
         queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id],
       });
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_RECENT_POSTS, data?.$id],
+        queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_CURRENT_USER, data?.$id],
@@ -185,5 +188,55 @@ export const useSearchPosts = (searchTerm: string) => {
     queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
     queryFn: () => searchPost({ searchTerm }),
     enabled: !!searchTerm,
+  });
+};
+
+export const useGetUsers = () => {
+  return useInfiniteQuery({
+    queryKey: [QUERY_KEYS.GET_USERS],
+    queryFn: getInfiniteUsers,
+    getNextPageParam: (lastPage) => {
+      if (lastPage && lastPage.documents.length === 0) return null;
+
+      const lastId = lastPage?.documents[lastPage.documents.length - 1].$id;
+
+      return lastId;
+    },
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (user: IUserUpdate) => updateUser(user),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
+      });
+    },
+  });
+};
+
+// export const useGetSaves = (userId: string) => {
+//   return useQuery({
+//     queryKey: [QUERY_KEYS.GET_SAVES_POST, userId],
+//     queryFn: () => getSaves(userId),
+//   });
+// };
+
+export const useGetSaves = (userId: string) => {
+  return useInfiniteQuery({
+    queryKey: [QUERY_KEYS.GET_SAVES_POST, userId],
+    queryFn: getInfiniteSaves,
+    getNextPageParam: (lastPage) => {
+      if (lastPage && lastPage.documents.length === 0) return null;
+
+      const lastId = lastPage?.documents[lastPage.documents.length - 1].$id;
+
+      return lastId;
+    },
   });
 };

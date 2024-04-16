@@ -10,6 +10,10 @@ export const INITIAL_USER = {
   email: "",
   imageUrl: "",
   bio: "",
+  followed: [],
+  following: [],
+  conversations: [],
+  imageId: "",
 };
 
 const INITIAL_STATE = {
@@ -34,7 +38,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       const currentAccount = await getCurrentUser();
       if (currentAccount) {
-        const { $id, name, username, email, imageUrl, bio } = currentAccount;
+        const {
+          $id,
+          name,
+          username,
+          email,
+          imageUrl,
+          bio,
+          followed,
+          following,
+          conversations,
+          imageId,
+        } = currentAccount;
         setUser({
           id: $id,
           name,
@@ -42,6 +57,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email,
           imageUrl,
           bio,
+          followed,
+          following,
+          conversations,
+          imageId,
         });
         setIsAuthenticated(true);
         return true;
