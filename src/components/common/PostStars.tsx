@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const PostStars = ({ post, userId }: IProps) => {
-  const [likes, setLikes] = useState([]);
+  const [likes, setLikes] = useState<string[]>([]);
   const [isSaved, setIsSaved] = useState(false);
 
   const { mutate: likePost } = useLikePost();
@@ -38,7 +38,7 @@ const PostStars = ({ post, userId }: IProps) => {
 
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
-    let newLike = [...likes];
+    let newLike: string[] = [...likes];
     const liked = newLike.includes(userId);
     if (liked) {
       newLike = newLike.filter((id) => id !== userId);

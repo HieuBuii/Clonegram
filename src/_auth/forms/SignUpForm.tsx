@@ -23,14 +23,13 @@ import Loader from "@/components/common/Loader";
 
 const SignUpForm = () => {
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const { checkAuthUser } = useUserContext();
   const naviage = useNavigate();
 
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
     useCreateUserMutation();
 
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
-    useSignInAccount();
+  const { mutateAsync: signInAccount } = useSignInAccount();
 
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),

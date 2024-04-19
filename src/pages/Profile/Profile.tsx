@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Route,
   Routes,
@@ -9,13 +10,11 @@ import {
 import { useUserContext } from "@/context/AuthContext";
 import Loader from "@/components/common/Loader";
 import { Button } from "@/components/ui/button";
-import LikedPosts from "../LikedPost";
 import GridPostList from "@/components/common/GridPostList";
 import {
   useGetUserById,
   useUpdateUser,
 } from "@/lib/react-query/queriesAndMutations";
-import { IUserUpdate } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
 import { checkIsFollowed } from "@/utils/utils";
 

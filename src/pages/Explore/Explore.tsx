@@ -8,6 +8,7 @@ import {
   useSearchPosts,
 } from "@/lib/react-query/queriesAndMutations";
 import { IPost } from "@/types";
+import { Models } from "appwrite";
 import { useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
@@ -42,7 +43,7 @@ const Explore = () => {
   const shouldShowSearchResult = searchValue !== "";
   const shouldShowPost =
     !shouldShowSearchResult &&
-    posts.pages.every((item) => item.documents.length === 0);
+    posts.pages.every((item) => item?.documents.length === 0);
   return (
     <div className="explore-container">
       <div className="explore-inner_container">
@@ -71,7 +72,9 @@ const Explore = () => {
         {shouldShowSearchResult ? (
           <SearchResults
             isSearching={isSearching}
-            searchedPosts={searchedPosts}
+            searchedPosts={
+              searchedPosts as Models.DocumentList<Models.Document>
+            }
           />
         ) : shouldShowPost ? (
           <p className="text-light-4 mt-10 text-center w-full">End of posts</p>
