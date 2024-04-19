@@ -15,12 +15,12 @@ const GridPostList = ({ posts, showUser = true, showStar = true }: IProps) => {
   return (
     <ul className="grid-container">
       {posts.map((post) => (
-        <li className="relative min-w-80 h-80">
+        <li key={post.$id} className="relative min-w-80 h-80">
           <Link to={`/posts/${post.$id}`} className="grid-post_link">
             <img
               src={post.imageUrl}
               alt="post image"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
           </Link>
           <div className="grid-post_user">
