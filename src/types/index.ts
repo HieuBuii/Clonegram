@@ -1,3 +1,5 @@
+import { Models } from "appwrite";
+
 export interface IContext {
   user: IUser;
   isLoading: boolean;
@@ -43,7 +45,7 @@ export type IUpdatePost = {
   tags?: string;
 };
 
-export type IUser = {
+export interface IUser extends Partial<Models.Document> {
   id: string;
   name: string;
   username: string;
@@ -54,12 +56,9 @@ export type IUser = {
   following: string[];
   conversations: string[];
   imageId: string;
-};
-
-export interface IUserUpdate extends IUser {
-  file: File[];
-  $id?: string;
 }
+
+export interface IUserUpdate extends Models.Document {}
 
 export type INewUser = {
   name: string;

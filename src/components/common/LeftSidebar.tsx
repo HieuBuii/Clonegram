@@ -29,7 +29,10 @@ const LeftSidebar = () => {
 
         <Link to={`/profile/${user.id}`} className="flex gap-3 items-center">
           <img
-            src={user.imageUrl || "/assets/icons/profile-placeholder.sgv"}
+            src={
+              (user.imageUrl as string) ||
+              "/assets/icons/profile-placeholder.sgv"
+            }
             alt="profile"
             className="h-14 w-14 rounded-full"
           />

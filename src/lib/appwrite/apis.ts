@@ -297,7 +297,7 @@ export async function updatePost(post: IUpdatePost) {
       await deleteFile(post.imageId);
     }
 
-    return updatePost;
+    return updatedPost;
   } catch (error) {
     console.log(error);
   }
