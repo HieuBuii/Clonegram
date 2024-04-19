@@ -20,6 +20,9 @@ export type IUpdateUser = {
   imageId: string;
   imageUrl: URL | string;
   file: File[];
+  followed: string[];
+  following: string[];
+  conversations: string[];
 };
 
 export type INewPost = {

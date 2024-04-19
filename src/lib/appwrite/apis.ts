@@ -423,7 +423,7 @@ export async function updateUser(user: IUserUpdate) {
     }
 
     // Safely delete old file after successful update
-    if (hasFileToUpdate) {
+    if (hasFileToUpdate && user.imageId) {
       await deleteFile(user.imageId);
     }
 
@@ -432,20 +432,6 @@ export async function updateUser(user: IUserUpdate) {
     console.log(error);
   }
 }
-
-// export async function getSaves(userId: string) {
-//   try {
-//     const saveList = await databases.listDocuments(
-//       appwriteConfig.databaseId,
-//       appwriteConfig.saveCollectionId,
-//       [Query.equal("user", userId)]
-//     );
-//     if (!saveList) throw new Error();
-//     return saveList;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 
 export async function getInfiniteSaves({
   pageParam,
@@ -472,6 +458,20 @@ export async function getInfiniteSaves({
     );
     if (!posts) throw new Error();
     return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    const userData = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId
+    );
+    if (!userData) throw new Error();
+    return userData;
   } catch (error) {
     console.log(error);
   }
