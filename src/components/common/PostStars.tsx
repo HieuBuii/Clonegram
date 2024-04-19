@@ -14,9 +14,8 @@ interface IProps {
   userId: string;
 }
 
-const PostStarts = ({ post, userId }: IProps) => {
-  const likesList = post.likes.map((user: Models.Document) => user.$id);
-  const [likes, setLikes] = useState(likesList);
+const PostStars = ({ post, userId }: IProps) => {
+  const [likes, setLikes] = useState([]);
   const [isSaved, setIsSaved] = useState(false);
 
   const { mutate: likePost } = useLikePost();
@@ -24,6 +23,11 @@ const PostStarts = ({ post, userId }: IProps) => {
   const { mutate: unSavePost, isPending: isUnSavingPost } = useUnSavePost();
 
   const { data: currentUser } = useGetCurrentUser();
+
+  useEffect(() => {
+    const likesList = post.likes.map((user: Models.Document) => user.$id);
+    setLikes(likesList);
+  }, [post]);
 
   useEffect(() => {
     const saved = currentUser?.save.find(
@@ -92,4 +96,4 @@ const PostStarts = ({ post, userId }: IProps) => {
   );
 };
 
-export default PostStarts;
+export default PostStars;

@@ -1,5 +1,5 @@
 import { ID, Query } from "appwrite";
-import { INewPost, INewUser, IUpdatePost, IUserDB } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUserUpdate, IUserDB } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
 export async function createUserAccount(user: INewUser) {
@@ -313,6 +313,165 @@ export async function deletePost(postId: string, imageId: string) {
       postId
     );
     return { status: "deleted" };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getInfinitePost({ pageParam }: { pageParam: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(9)];
+  if (pageParam) {
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      queries
+    );
+    if (!posts) throw new Error();
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function searchPost({ searchTerm }: { searchTerm: string }) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.search("caption", searchTerm)]
+    );
+    if (!posts) throw new Error();
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getInfiniteUsers({ pageParam }: { pageParam: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: any[] = [Query.orderDesc("$createdAt"), Query.limit(9)];
+  if (pageParam) {
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      queries
+    );
+    if (!posts) throw new Error();
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateUser(user: IUserUpdate) {
+  const hasFileToUpdate = user.file?.length > 0;
+  try {
+    let imgs = {
+      imageUrl: user.imageUrl,
+      imageId: user.imageId,
+    };
+
+    if (hasFileToUpdate) {
+      // Upload file to appwrite storage
+      const uploadedFile = await uploadFile(user.file[0]);
+      if (!uploadedFile) throw Error;
+
+      // Get new file url
+      const fileUrl = getFilePreview(uploadedFile.$id);
+      if (!fileUrl) {
+        await deleteFile(uploadedFile.$id);
+        throw Error;
+      }
+      imgs = { ...imgs, imageUrl: fileUrl, imageId: uploadedFile.$id };
+    }
+
+    // Update user
+    const updatedUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      user.$id || "",
+      {
+        name: user.name,
+        imageUrl: imgs.imageUrl,
+        imageId: imgs.imageId,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        followed: user.followed,
+        following: user.following,
+        conversations: user.conversations,
+      }
+    );
+
+    if (!updatedUser) {
+      // Delete new file that has been recently uploaded
+      if (hasFileToUpdate) {
+        await deleteFile(imgs.imageId);
+      }
+
+      // If no new file uploaded, just throw error
+      throw Error;
+    }
+
+    // Safely delete old file after successful update
+    if (hasFileToUpdate) {
+      await deleteFile(user.imageId);
+    }
+
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// export async function getSaves(userId: string) {
+//   try {
+//     const saveList = await databases.listDocuments(
+//       appwriteConfig.databaseId,
+//       appwriteConfig.saveCollectionId,
+//       [Query.equal("user", userId)]
+//     );
+//     if (!saveList) throw new Error();
+//     return saveList;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+export async function getInfiniteSaves({
+  pageParam,
+  queryKey,
+}: {
+  pageParam: number;
+  queryKey: string[];
+}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: any[] = [
+    Query.equal("user", queryKey[1]),
+    Query.orderDesc("$createdAt"),
+    Query.limit(9),
+  ];
+  if (pageParam) {
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.saveCollectionId,
+      queries
+    );
+    if (!posts) throw new Error();
+    return posts;
   } catch (error) {
     console.log(error);
   }
